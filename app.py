@@ -1,24 +1,44 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # coding=utf-8
 # author: Rand01ph
 
-import logging; logging.basicConfig(level=logging.INFO)
+import functools, asyncio
 
-import asyncio, os, json, time
-from datetime import datetime
+def get(path):
+    '''
+    @get('/path')
+    '''
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        wrapper.__method__ = 'GET'
+        wrapper.__route__ = path
+        return wrapper
+    return decorator
 
-from aiohttp import web
 
-def index(request):
-    return web.Response(body=b'<h1>Awesome</h1>')
+def post(path):
+    '''
+    @post('/path')
+    '''
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+        wrapper.__method__ = 'POST'
+        wrapper.__route__ = path
+        return wrapper
+    return decorator
 
-async def init(loop):
-    app = web.Application(loop=loop)
-    app.router.add_route('GET', '/', index)
-    srv = await loop.create_server(app.make_handler(), '127.0.0.1', 9000)
-    logging.info('server started at http://127.0.0.1:9000...')
-    return srv
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(init(loop))
-loop.run_forever()
+class RequestHandler(object):
+
+    def __init__(self, app, fn):
+        self._app = app
+        self._func = fn
+
+    async def __call__(self, request):
+        kw =
+        r = await self._func(**kw)
+        return r

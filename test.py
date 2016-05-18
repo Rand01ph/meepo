@@ -1,3 +1,7 @@
+#! /usr/bin/env python
+# coding=utf-8
+# author: Rand01ph
+
 import orm, asyncio, sys
 from models import User
 
