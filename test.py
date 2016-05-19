@@ -2,12 +2,13 @@
 # coding=utf-8
 # author: Rand01ph
 
-import orm, asyncio, sys
+import asyncio, sys
 from models import User
+from meepo import orm
 
 async def test():
     await orm.create_pool(loop=loop, user='www-data', password='WWW-data-123', db='meepo')
-    u = User(name='Test3', email='test3@example.com', passwd='1234567890', image='about:blank')
+    u = User(name='Test3', email='test5@example.com', passwd='1234567890', image='about:blank')
     await u.save()
 
 loop = asyncio.get_event_loop()
