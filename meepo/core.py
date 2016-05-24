@@ -4,6 +4,8 @@
 
 import functools, asyncio, inspect
 
+from urllib import parse
+
 from aiohttp import web
 
 def get(path):
@@ -42,8 +44,31 @@ class RequestHandler(object):
 
     async def __call__(self, request):
         kw = None
-        r = await self._func(**kw)
-        return r
+        if request.method == 'POST':
+            if not request.content_type:
+                return web.HTTPBadRequest('Missing Content-Type.')
+            ct = request.content_type.lower()
+            if ct.startswith('application/json'):
+                params = await request.json()
+                if not isinstance(params, dict):
+                    return web.HTTPBadRequest("JSON body must be object.")
+                kw = params
+            elif ct.startswith('application/x-www-form-urlencoded') or ct.startswith('multipart/form-data'):
+                params = await request.post()
+                kw = dict(**params)
+            else:
+                return web.HTTPBadRequest('Unsupported Content-Type: %s' % request.content_type)
+        if request.method == 'GET':
+            qs = request.query_string
+            if qs:
+                kw = dict()
+                for k, v in parse.parse_qs(qs, True).items():
+                    kw[k] = v[0]
+        try:
+            r = await self._func(**kw)
+            return r
+        except APIError as e:
+            return dict(error=e.error, data=e.data, message=e.message)
 
 
 def add_route(app, fn):
