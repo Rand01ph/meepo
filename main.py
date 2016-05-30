@@ -15,7 +15,7 @@ def index(request):
     return web.Response(body=b'<h1>Awesome</h1>')
 
 @get('/aaa')
-def aaa():
+def aaa(*args):
     return web.Response(body=b'<h1>aaa</h1>')
 
 @get('/blog/{id}')
