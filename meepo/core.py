@@ -53,21 +53,26 @@ class RequestHandler(object):
         need_args = [name for name, param in func_items
                          if param.kind == param.KEYWORD_ONLY
                          or param.kind == param.VAR_KEYWORD]
-        if not func_items:
+        any_args = [name for name, param in func_items
+                         if param.kind == param.VAR_KEYWORD]
+        for name, param in func_items:
+            print(name, param.kind)
+        print(request.match_info)
+        if func_args:
             if request.method == 'POST':
                 if not request.content_type:
-                    return web.HTTPBadRequest('Missing Content-Type.')
+                    return web.HTTPBadRequest(text='Missing Content-Type.')
                 ct = request.content_type.lower()
                 if ct.startswith('application/json'):
                     params = await request.json()
                     if not isinstance(params, dict):
-                        return web.HTTPBadRequest("JSON body must be object.")
+                        return web.HTTPBadRequest(text="JSON body must be object.")
                     kw = params
                 elif ct.startswith('application/x-www-form-urlencoded') or ct.startswith('multipart/form-data'):
                     params = await request.post()
                     kw = dict(**params)
                 else:
-                    return web.HTTPBadRequest('Unsupported Content-Type: %s' % request.content_type)
+                    return web.HTTPBadRequest(text='Unsupported Content-Type: %s' % request.content_type)
             if request.method == 'GET':
                 qs = request.query_string
                 if qs:
@@ -76,12 +81,23 @@ class RequestHandler(object):
                         kw[k] = v[0]
         if kw is None:
             kw = dict(**request.match_info)
+        else:
+            if not any_args:
+                copy = dict()
+                for name in func_args:
+                    if name in kw:
+                        copy[name] = kw[name]
+                kw = copy
+            for k, v in request.match_info.items():
+                if k in kw:
+                    print("Duplicate arg name in named arg and kw args: %s" % k)
+                kw[k] = v
         if 'request' in func_args:
             kw['request'] = request
         if required_kw_args:
             for name in required_kw_args:
                 if not name in kw:
-                    return web.HTTPBadRequest('Missing argument: %s' % name)
+                    return web.HTTPBadRequest(text="Missing argument: %s" % name)
         print('call with args: %s' % str(kw))
         try:
             r = await self._func(**kw)

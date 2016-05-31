@@ -11,7 +11,7 @@ from aiohttp import web
 from meepo.core import add_route, get
 
 @get('/')
-def index(request):
+def index(a, b):
     return web.Response(body=b'<h1>Awesome</h1>')
 
 @get('/aaa')
