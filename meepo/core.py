@@ -47,6 +47,8 @@ class RequestHandler(object):
         kw = None
         func_items = self._params.items()
         func_args = [name for name, param in func_items]
+        positional_or_keyword_args = [name for name, param in func_items
+                                      if param.kind == param.POSITIONAL_OR_KEYWORD]
         required_kw_args = [name for name, param in func_items
                             if param.kind == param.KEYWORD_ONLY
                             and param.default == inspect.Parameter.empty]
@@ -92,7 +94,7 @@ class RequestHandler(object):
                 if k in kw:
                     print("Duplicate arg name in named arg and kw args: %s" % k)
                 kw[k] = v
-        if 'request' in func_args:
+        if 'request' == positional_or_keyword_args[-1]:
             kw['request'] = request
         if required_kw_args:
             for name in required_kw_args:

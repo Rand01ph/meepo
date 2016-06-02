@@ -8,30 +8,11 @@ import asyncio, os
 
 from aiohttp import web
 
-from meepo.core import add_route, get
-
-@get('/')
-def index(a, b):
-    return web.Response(body=b'<h1>Awesome</h1>')
-
-@get('/aaa')
-def aaa(*args):
-    return web.Response(body=b'<h1>aaa</h1>')
-
-@get('/blog/{id}')
-def get_blog(id):
-    return web.Response(body=b'<h1>get_blog</h1>')
-
-@get('/ggg')
-def get_ggg(a, b, *, c, d=10):
-    return web.Response(body=b'<h1>get_blog</h1>')
+from meepo.core import add_routes
 
 async def init(loop):
     app = web.Application(loop=loop)
-    add_route(app, index)
-    add_route(app, aaa)
-    add_route(app, get_ggg)
-    add_route(app, get_blog)
+    add_routes(app, 'handlers')
     srv = await loop.create_server(app.make_handler(), '127.0.0.1', 9999)
     logging.info('server started at http://127.0.0.1:999...')
     return srv
