@@ -73,7 +73,7 @@ async def response_factory(app, handler):
 async def init(loop):
     await orm.create_pool(loop=loop, host='127.0.0.1', port=3306, user='www-data', password='WWW-data-123', db='meepo')
     app = web.Application(loop=loop, middlewares=[
-        logger_factory, response_factory
+        logger_factory
     ])
     aiohttp_jinja2.setup(app,
                          loader=jinja2.FileSystemLoader('templates'))

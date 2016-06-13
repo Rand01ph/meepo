@@ -5,10 +5,13 @@ from models import User
 
 
 @get('/')
-@aiohttp_jinja2.template('test.html')
 async def index(request):
     users = await User.findAll()
     print(users)
-    return {
+    context = {
         'users': users
     }
+    response = aiohttp_jinja2.render_template('test.html',
+                                              request,
+                                              context)
+    return response
