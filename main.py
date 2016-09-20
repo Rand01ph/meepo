@@ -3,15 +3,12 @@
 # author: Rand01ph
 
 import logging; logging.basicConfig(level=logging.INFO)
-
 import asyncio, os
 
 from aiohttp import web
-
 import aiohttp_jinja2, jinja2
 
 from meepo.core import add_routes
-
 import meepo.orm as orm
 
 async def logger_factory(app, handler):
