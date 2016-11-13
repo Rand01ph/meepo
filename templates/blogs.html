@@ -8,7 +8,7 @@
 <section class="section">
     <div class="container">
         <h2><a href="/blog/{{blog.id}}">{{blog.name}}</a></h2>
-        <p>{{blog.created_at}}</p>
+        <p>{{blog.created_at|datetime}}</p>
         <p>{{blog.summary}}</p>
         <p><a href="/blog/{{blog.id}}">继续阅读</a></p>
     </div>
