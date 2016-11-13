@@ -4,13 +4,15 @@
 
 {% block content %}
 
-<div class="col-xs-12 col-sm-6 col-md-8">
-    {% for blog in blogs %}
-    <h2><a href="/blog/{{blog.id}}">{{blog.name}}</a></h2>
-    <p>{{blog.created_at}}</p>
-    <p>{{blog.summary}}</p>
-    <p><a href="/blog/{{blog.id}}">继续阅读</a></p>
-    {% endfor %}
-</div>
+{% for blog in blogs %}
+<section class="section">
+    <div class="container">
+        <h2><a href="/blog/{{blog.id}}">{{blog.name}}</a></h2>
+        <p>{{blog.created_at}}</p>
+        <p>{{blog.summary}}</p>
+        <p><a href="/blog/{{blog.id}}">继续阅读</a></p>
+    </div>
+</section>
+{% endfor %}
 
 {% endblock %}
