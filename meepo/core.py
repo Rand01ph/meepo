@@ -46,6 +46,7 @@ class RequestHandler(object):
     async def __call__(self, request):
         kw = None
         func_items = self._params.items()
+        print (func_items)
         func_args = [name for name, param in func_items]
         positional_or_keyword_args = [name for name, param in func_items
                                       if param.kind == param.POSITIONAL_OR_KEYWORD]
@@ -83,6 +84,7 @@ class RequestHandler(object):
                         kw[k] = v[0]
         if kw is None:
             kw = dict(**request.match_info)
+            print (kw)
         else:
             if not any_args:
                 copy = dict()
@@ -94,6 +96,7 @@ class RequestHandler(object):
                 if k in kw:
                     print("Duplicate arg name in named arg and kw args: %s" % k)
                 kw[k] = v
+        print (positional_or_keyword_args)
         if 'request' == positional_or_keyword_args[-1]:
             kw['request'] = request
         if required_kw_args:

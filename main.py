@@ -2,6 +2,7 @@
 # coding=utf-8
 # author: Rand01ph
 
+import json
 import logging; logging.basicConfig(level=logging.INFO)
 import asyncio, os
 
@@ -48,6 +49,7 @@ async def response_factory(app, handler):
         if isinstance(r, dict):
             template = r.get('__template__')
             if template is None:
+                print ("3333333333333")
                 resp = web.Response(body=json.dumps(r, ensure_ascii=False, default=lambda o: o.__dict__).encode('utf-8'))
                 resp.content_type = 'application/json;charset=utf-8'
                 return resp
@@ -83,7 +85,8 @@ def datetime_filter(t):
 async def init(loop):
     await orm.create_pool(loop=loop, host='127.0.0.1', port=3306, user='www-data', password='WWW-data-123', db='meepo')
     app = web.Application(loop=loop, middlewares=[
-        logger_factory
+        logger_factory,
+        response_factory
     ])
     aiohttp_jinja2.setup(app,
                          loader=jinja2.FileSystemLoader('templates'))
